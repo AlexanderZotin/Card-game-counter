@@ -4,18 +4,15 @@ import counter.model.PlayersCount;
 
 import javax.swing.JPanel;
 import java.awt.Graphics;
-import java.util.Objects;
 
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+
+@NonNull
+@AllArgsConstructor
 class GraphicsPanel extends JPanel {
-    private PlayersCount playersCount;
-
-    GraphicsPanel(PlayersCount playersCount) {
-        setPlayersCount(playersCount);
-    }
-
-    void setPlayersCount(PlayersCount playersCount) {
-        this.playersCount = Objects.requireNonNull(playersCount, "Параметр playersCount не должен быть null!");
-    }
+    private @Setter PlayersCount playersCount;
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -24,7 +21,7 @@ class GraphicsPanel extends JPanel {
             case TWO -> drawFieldForTwoPlayers(g);
             case THREE -> drawFieldForThreePlayers(g);
             case FOUR -> drawFieldForFourPlayers(g);
-            default -> throw new UnsupportedOperationException("Неизвестная enum-константа: " + playersCount);
+            default -> throw new UnsupportedOperationException("Unknown enum-constant: " + playersCount);
         }
     }
 

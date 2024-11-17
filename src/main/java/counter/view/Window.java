@@ -3,6 +3,7 @@ package counter.view;
 import counter.exceptions.NegativeNumberException;
 import counter.model.PlayersCount;
 import counter.model.Player;
+import counter.controller.*;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -17,6 +18,8 @@ import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.SwingUtilities;
 
+import lombok.NonNull;
+
 public class Window extends JFrame implements View {
     private Field field;
     private final JButton cleanAll = new JButton("Очистить всё");
@@ -24,16 +27,14 @@ public class Window extends JFrame implements View {
     private final JComboBox<PlayersCount> playersCountComboBox = new JComboBox<>(PlayersCount.values());
     
     public Window() {
-        SwingUtilities.invokeLater(() -> {
-            field = new Field(PlayersCount.THREE);
-            playersCountComboBox.setSelectedItem(PlayersCount.THREE);
-            constructPanels();
-            setResizable(false);
-            setTitle("Преферанс-счётчик. ©А.А Зотин, 2023 — 2024");
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setPreferredSize(new Dimension(505, 530));
-            pack();
-        });
+        field = new Field(PlayersCount.THREE);
+        playersCountComboBox.setSelectedItem(PlayersCount.THREE);
+        constructPanels();
+        setResizable(false);
+        setTitle("Преферанс-счётчик. ©А.А Зотин, 2023 — 2024");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setPreferredSize(new Dimension(505, 530));
+        pack();
     }
 
     private void constructPanels() {
@@ -55,12 +56,10 @@ public class Window extends JFrame implements View {
     }
 
     @Override
-    public void subscribeToListener(Listener listener) {
-        SwingUtilities.invokeLater(() -> {
-            go.addActionListener(listener);
-            cleanAll.addActionListener(listener);
-            playersCountComboBox.addItemListener(listener);
-        });
+    public void subscribeToListener(@NonNull Listener listener) {
+        go.addActionListener(listener);
+        cleanAll.addActionListener(listener);
+        playersCountComboBox.addItemListener(listener);
     }
 
     @Override
@@ -71,42 +70,21 @@ public class Window extends JFrame implements View {
     }
 
     @Override
-    public void setVisible(boolean visible) {
-        SwingUtilities.invokeLater(() -> {
-            super.setVisible(true);
-            if (visible) {
-                repaint();
-                setLocationRelativeTo(null);
-            }
-        });
+    public void update(@NonNull PlayersCount count) {
+        field.update(count);
+        repaint();
     }
 
     @Override
-    public void update(PlayersCount count) {
-        SwingUtilities.invokeLater(() -> {
-            field.update(count);
-            repaint();
-        });
-    }
-
-    @Override
-    public Player[] parseData() {
+    public Player[] parseData() throws NumberFormatException, NegativeNumberException {
         Object selected = playersCountComboBox.getSelectedItem();
         assert selected != null;
         PlayersCount playersCount = (PlayersCount) selected;
         Player[] players = new Player[playersCount.getNum()];
         players = Arrays.stream(players).map(_-> new Player()).toArray(Player[]::new);
-        try {
-            parseLooseAndWinPoints(players);
-            parseWhists(players);
-            return players;
-        } catch(NumberFormatException _) {
-            handleNumberFormatException();
-            return new Player[]{};
-        } catch (NegativeNumberException _) {
-            handleNegativeNumberException();
-            return new Player[]{};
-        }
+        parseLooseAndWinPoints(players);
+        parseWhists(players);
+        return players;
     }
 
     private void parseLooseAndWinPoints(Player[] players) throws NumberFormatException {
@@ -127,28 +105,17 @@ public class Window extends JFrame implements View {
         }
     }
 
-    private void handleNumberFormatException() {
-        ViewUtils.showErrorDialog("""
-                    <html>
-                        Можно вводить только целые числа!<br>
-                        Вводить нечисловые символы или десятичные дроби нельзя.<br>
-                        Пожалуйста, попробуйте ещё раз.
-                    </html>
-                    """);
-    }
-
-    private void handleNegativeNumberException() {
-        ViewUtils.showErrorDialog("""
-                <html>
-                    В одной из полей для пули было введено отрицательное число!<br>
-                    Для обозначения проигрыша игрока используется Гора.<br>
-                    Пожалуйста, попробуйте ещё раз.
-                </html>
-                """);
-    }
-
     @Override
-    public void showResult(int[] result) {
+    public void showResult(@NonNull int[] result) {
         ViewUtils.showResultDialog(ViewUtils.toResultList("Игрок ", result));
+    }
+    
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(true);
+        if (visible) {
+            repaint();
+            setLocationRelativeTo(null);
+        }
     }
 }

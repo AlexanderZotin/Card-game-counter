@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import lombok.NonNull;
+
 class Field extends GraphicsPanel {
     private SpringLayout layout;
     private JLabel[] labelsWithPlayersNumber;
@@ -17,12 +19,12 @@ class Field extends GraphicsPanel {
     JTextField[] textFieldsForLoosePoints;
     final Map<Integer, Map<Integer, JTextField>> textFieldsForWhists = new HashMap<>();
 
-    Field(PlayersCount playersCount) {
+    Field(@NonNull PlayersCount playersCount) {
         super(playersCount);
         update(playersCount);
     }
 
-    void update(PlayersCount playersCount) {
+    void update(@NonNull PlayersCount playersCount) {
         super.setPlayersCount(playersCount);
         removeAll();
         reinitializeComponents(playersCount);
@@ -37,7 +39,6 @@ class Field extends GraphicsPanel {
         textFieldsForLoosePoints = new JTextField[count];
         labelsWithPlayersNumber = new JLabel[count];
 
-        //Вызов close() нужен, т.к обязательно наличие терминальной операции
         textFieldsForWhists.clear();
         for (int i = 0; i < playersCount.getNum(); i++) {
             textFieldsForWhists.put(i, new HashMap<>());
@@ -60,7 +61,7 @@ class Field extends GraphicsPanel {
             case TWO -> forTwoPlayers();
             case THREE -> forThreePlayers();
             case FOUR -> forFourPlayers();
-            default -> throw new UnsupportedOperationException("Неизвестная enum-константа: " + playersCount);
+            default -> throw new UnsupportedOperationException("Unknown enum-constant: " + playersCount);
         }
     }
 

@@ -1,17 +1,13 @@
 package counter.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
 public enum PlayersCount {
     TWO(2), THREE(3), FOUR(4);
 
-    private final int num;
-
-    PlayersCount(int num) {
-        this.num = num;
-    }
-
-    public int getNum() {
-        return num;
-    }
+    private @Getter final int num;
 
     @Override
     public String toString() {

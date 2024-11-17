@@ -1,12 +1,12 @@
 package counter.view;
 
 import counter.exceptions.NegativeNumberException;
+import lombok.NonNull;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import java.awt.Font;
-import java.util.Objects;
 
 public final class ViewUtils {
     private static final JLabel label = new JLabel();
@@ -16,7 +16,7 @@ public final class ViewUtils {
     }
 
     private ViewUtils() {
-        throw new AssertionError("Не должно быть экземпляров класса ViewUtils!");
+        throw new AssertionError("No instansces of class ViewUtils for you!");
     }
 
     public static void showErrorDialog(String text) {
@@ -41,8 +41,7 @@ public final class ViewUtils {
         return answer == 0;
     }
 
-    public static int parseInt(JTextField textField) throws NumberFormatException {
-        Objects.requireNonNull(textField, "Параметр textField не должен быть null!");
+    public static int parseInt(@NonNull JTextField textField) throws NumberFormatException {
         String text = textField.getText().replaceAll(" ", "");
         return text.isEmpty()? 0 : Integer.parseInt(text);
     }
@@ -55,7 +54,7 @@ public final class ViewUtils {
         return result;
     }
 
-    public static String toResultList(String prefix, int[] elements) {
+    public static String toResultList(@NonNull String prefix, int[] elements) {
         StringBuilder list = new StringBuilder();
         list.append("<html>");
         for(int i = 0; i < elements.length; i++) {
